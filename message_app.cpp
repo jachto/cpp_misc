@@ -59,10 +59,11 @@ int main() {
         std::thread receive_thread(receive_messages, client_socket);
 
         std::string message;
-        while (true) {
+        while (!should_exit) {
             std::getline(std::cin, message);
             if (message == "exit") {
-                send(client_socket, "", 0, 0);
+                send(client_socket, "exit", 4, 0);
+                should_exit = true;
                 break;
             }
             send(client_socket, message.c_str(), message.length(), 0);
@@ -85,10 +86,11 @@ int main() {
         std::thread receive_thread(receive_messages, socket_fd);
 
         std::string message;
-        while (true) {
+        while (!should_exit) {
             std::getline(std::cin, message);
             if (message == "exit") {
-                send(socket_fd, "", 0, 0);
+                send(socket_fd, "exit", 4, 0);
+                should_exit = true;
                 break;
             }
             send(socket_fd, message.c_str(), message.length(), 0);
