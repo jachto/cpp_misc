@@ -5,17 +5,27 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <thread>
+#include <atomic>
 
 const int PORT = 8888;
 const int BUFFER_SIZE = 1024;
 
+std::atomic<bool> should_exit(false);
+
 void receive_messages(int socket_fd) {
     char buffer[BUFFER_SIZE];
-    while (true) {
+    while (!should_exit) {
         memset(buffer, 0, BUFFER_SIZE);
         int bytes_received = recv(socket_fd, buffer, BUFFER_SIZE, 0);
         if (bytes_received <= 0) {
             std::cout << "Connection closed." << std::endl;
+            should_exit = true;
+            break;
+        }
+        std::string received_message(buffer);
+        if (received_message == "exit") {
+            std::cout << "Received exit command. Closing connection." << std::endl;
+            should_exit = true;
             break;
         }
         std::cout << "Received: " << buffer << std::endl;
