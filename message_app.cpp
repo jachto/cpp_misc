@@ -61,7 +61,10 @@ int main() {
         std::string message;
         while (true) {
             std::getline(std::cin, message);
-            if (message == "exit") break;
+            if (message == "exit") {
+                send(client_socket, "", 0, 0);
+                break;
+            }
             send(client_socket, message.c_str(), message.length(), 0);
         }
 
@@ -84,7 +87,10 @@ int main() {
         std::string message;
         while (true) {
             std::getline(std::cin, message);
-            if (message == "exit") break;
+            if (message == "exit") {
+                send(socket_fd, "", 0, 0);
+                break;
+            }
             send(socket_fd, message.c_str(), message.length(), 0);
         }
 
