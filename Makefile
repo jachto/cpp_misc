@@ -1,11 +1,15 @@
 CXX = g++
 CXXFLAGS = -g -std=c++11 -Wall -Wextra -pthread
-TARGET = message_app
-SRCS = message_app.cpp
+TARGETS = message_app pipe_com
 
-$(TARGET): $(SRCS)
-	$(CXX) $(CXXFLAGS) -o $(TARGET) $(SRCS)
+all: $(TARGETS)
+
+message_app: message_app.cpp
+	$(CXX) $(CXXFLAGS) -o $@ $<
+
+pipe_com: pipe_com.cpp
+	$(CXX) $(CXXFLAGS) -o $@ $<
 
 .PHONY: clean
 clean:
-	rm -f $(TARGET)
+	rm -f $(TARGETS)
