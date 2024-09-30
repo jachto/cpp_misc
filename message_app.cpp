@@ -22,14 +22,17 @@ void receive_messages(int socket_fd) {
             should_exit = true;
             break;
         }
+        /*
         std::string received_message(buffer);
         if (received_message == "exit") {
             std::cout << "Received exit command. Closing connection." << std::endl;
             should_exit = true;
             break;
         }
+        */
         std::cout << "Received: " << buffer << std::endl;
     }
+        std::cout << "Ending receive thread " << std::endl;
 }
 
 int main() {
@@ -72,15 +75,19 @@ int main() {
         while (!should_exit) {
             std::getline(std::cin, message);
             if (message == "exit") {
-                send(client_socket, "exit", 4, 0);
                 should_exit = true;
+                send(client_socket, message.c_str(), message.length(), 0);
+                send(socket_fd, std::nullptr_t(), 0, 0);
                 break;
             }
             send(client_socket, message.c_str(), message.length(), 0);
         }
-
-        receive_thread.join();
+        if (receive_thread.joinable()) {
+            receive_thread.join();
+        }
         close(client_socket);
+        std::cout << "Server end execution" << std::endl;
+
     } else if (mode == "c") {
         std::string server_ip;
         std::cout << "Enter server IP address: ";
@@ -99,19 +106,24 @@ int main() {
         while (!should_exit) {
             std::getline(std::cin, message);
             if (message == "exit") {
-                send(socket_fd, "exit", 4, 0);
                 should_exit = true;
+                send(socket_fd, message.c_str(), message.length(), 0);
                 break;
             }
             send(socket_fd, message.c_str(), message.length(), 0);
         }
+        if (receive_thread.joinable()) {
+            receive_thread.join();
+        }
+        std::cout << "Client end execution" << std::endl;
 
-        receive_thread.join();
     } else {
         std::cerr << "Invalid mode. Please enter 's' or 'c'." << std::endl;
         return 1;
     }
 
+    std::cout << "Before close socket_fd" << std::endl;
     close(socket_fd);
+    std::cout << "After close socket_fd" << std::endl;
     return 0;
 }
