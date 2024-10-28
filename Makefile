@@ -1,8 +1,12 @@
 CXX = g++
-CXXFLAGS = -g -std=c++11 -Wall -Wextra -pthread
+CPP_STD = c++14
+CXXFLAGS = -g -std=$(CPP_STD) -Wall -Wextra -pthread
 TARGETS = mult_sat message_app pipe_com
 
 all: $(TARGETS)
+
+factorize: factorize.cpp
+	$(CXX) $(CXXFLAGS) -fsanitize=address -o $@ $<
 
 packet_capture: packet_capture.cpp
 	$(CXX) $(CXXFLAGS) -o $@ $< -lpcap
